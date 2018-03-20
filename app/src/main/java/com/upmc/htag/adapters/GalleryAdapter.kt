@@ -1,22 +1,22 @@
-package com.upmc.socialfilter.adapters
+package com.upmc.htag.adapters
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.upmc.socialfilter.R
-import com.upmc.socialfilter.models.Media
+import com.upmc.htag.R
+import com.upmc.htag.models.MediaContent
 
 /**
  * Created by cb_mac on 22/02/2018.
  */
 
 /**
- * Class to display content like image,video in listview
+ * Class to display content saved by user
  */
-class MediaAdapter(private val medias: List<Media>, private val context: Context) :
-        RecyclerView.Adapter<MediaAdapter.MyViewHolder>() {
+class GalleryAdapter(val medias: List<MediaContent>, val context: Context) :
+        RecyclerView.Adapter<GalleryAdapter.MyViewHolder>() {
 
     override fun getItemCount(): Int {
         return medias.size
@@ -29,13 +29,13 @@ class MediaAdapter(private val medias: List<Media>, private val context: Context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.media_model, parent, false)
+        val view = inflater.inflate(R.layout.fragment_liked_model, parent, false)
         return MyViewHolder(view)
     }
 
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private var currentMedia: Media? = null
+        private var currentMedia: MediaContent? = null
 
         init {
 
@@ -44,7 +44,7 @@ class MediaAdapter(private val medias: List<Media>, private val context: Context
              */
         }
 
-        fun display(media: Media) {
+        fun display(media: MediaContent) {
             currentMedia=media
             /**
              * TODO

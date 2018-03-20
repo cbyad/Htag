@@ -1,4 +1,4 @@
-package com.upmc.socialfilter
+package com.upmc.htag
 
 import org.junit.Test
 

@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.upmc.htag.activities.MainActivity">
+
+    <ImageView
+        android:id="@+id/image_chosed"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        android:layout_weight="5"/>
+    <Button
+        android:id="@+id/api_button_caller"
+        android:text="@string/start_button"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/info_text_home"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+       android:gravity="center_horizontal"
+        android:text="@string/choose_image"
+        android:textSize="30sp"
+        android:visibility="visible"
+        />
+
+
+
+
+</LinearLayout>

@@ -1,4 +1,4 @@
-package com.upmc.socialfilter
+package com.upmc.htag
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getTargetContext()
-        assertEquals("com.upmc.socialfilter", appContext.packageName)
+        assertEquals("com.upmc.tellme", appContext.packageName)
     }
 }

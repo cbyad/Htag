@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.upmc.socialfilter.activities.MainActivity">
+    tools:context="com.upmc.htag.activities.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -34,22 +35,16 @@
             android:layout_height="wrap_content">
 
             <android.support.design.widget.TabItem
-                android:id="@+id/tab_item_post"
+                android:id="@+id/tab_item_home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tab_item_post" />
+                android:text="@string/tab_item_home" />
 
             <android.support.design.widget.TabItem
-                android:id="@+id/tab_item_image"
+                android:id="@+id/tab_item_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tab_item_Image" />
-
-            <android.support.design.widget.TabItem
-                android:id="@+id/tab_item_video"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tab_item_video" />
+                android:text="@string/tab_item_like" />
 
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>
@@ -61,11 +56,27 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/gallery_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:srcCompat="@android:drawable/ic_menu_gallery" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/photo_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        app:layout_anchor="@id/gallery_fab"
+        app:layout_anchorGravity="top"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
 
 </android.support.design.widget.CoordinatorLayout>
