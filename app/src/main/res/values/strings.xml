@@ -1,18 +1,12 @@
 <resources>
+
+    <!-- Strings related to api -->
     <string name="app_name">Htag</string>
+    <string name="azure_api_endpoint">https://westeurope.api.cognitive.microsoft.com/vision/v1.0/tag</string>
     <string name="deep_ai_api_key">6e5f23c0-bebe-4661-a587-e3640c158889</string>
     <string name="azure_vision_api_key">276833e3df7243bbb6c7b4314232bc3d</string>
     <string name="azure_vision_api_key_2">a660b5a802c145e1805233eae492c6e3</string>
 
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
@@ -25,4 +19,5 @@
     <string name="tab_item_like">Gallery</string>
     <string name="choose_image">Please select an image</string>
     <string name="start_button">Check</string>
+    <string name="auto_complete_text">Search for a tag</string>
 </resources>

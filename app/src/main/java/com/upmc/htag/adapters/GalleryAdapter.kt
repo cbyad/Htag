@@ -29,7 +29,7 @@ class GalleryAdapter(val medias: List<MediaContent>, val context: Context) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.fragment_liked_model, parent, false)
+        val view = inflater.inflate(R.layout.fragment_gallery_model, parent, false)
         return MyViewHolder(view)
     }
 

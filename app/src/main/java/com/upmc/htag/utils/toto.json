@@ -1,0 +1,47 @@
+{
+  "tags": [
+    {
+      "name": "grass",
+      "confidence": 0.998868465423584
+    },
+    {
+      "name": "mammal",
+      "confidence": 0.97440820932388306,
+      "hint": "animal"
+    },
+    {
+      "name": "hay",
+      "confidence": 0.94991618394851685
+    },
+    {
+      "name": "animal",
+      "confidence": 0.92780810594558716
+    },
+    {
+      "name": "outdoor",
+      "confidence": 0.91497862339019775
+    },
+    {
+      "name": "field",
+      "confidence": 0.78976482152938843
+    },
+    {
+      "name": "group",
+      "confidence": 0.58046495914459229
+    },
+    {
+      "name": "dry",
+      "confidence": 0.37919917702674866
+    },
+    {
+      "name": "highland",
+      "confidence": 0.033202905207872391
+    }
+  ],
+  "requestId": "2f608f50-fa19-4875-8aaf-cf742ba556dd",
+  "metadata": {
+    "height": 400,
+    "width": 640,
+    "format": "Jpeg"
+  }
+}

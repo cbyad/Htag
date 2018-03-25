@@ -17,15 +17,16 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.provider.MediaStore
+import android.support.design.widget.Snackbar
 import android.util.Log
 import kotlinx.android.synthetic.main.fragment_home_main.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 import android.widget.LinearLayout
-
-
-
+import android.widget.Toast
+import com.upmc.htag.utils.ImageUtils
+import com.upmc.htag.views.HtagSnackbar
 
 class MainActivity : AppCompatActivity() {
     /**
@@ -33,6 +34,8 @@ class MainActivity : AppCompatActivity() {
      */
     val PICK_PHOTO = 1
     val INTENT_TYPE = "image/*"
+
+
 
 
     /**
@@ -57,12 +60,8 @@ class MainActivity : AppCompatActivity() {
         // Set up the ViewPager with the sections adapter.
         container.adapter = mSectionsPagerAdapter
 
-
-
         container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
-
-
 
         // gallery_thumb to pick content from file system
         gallery_fab.setOnClickListener { /*view ->
@@ -74,11 +73,12 @@ class MainActivity : AppCompatActivity() {
 
         // photo_fab to capture an image
         photo_fab.setOnClickListener { launchCameraPicker() }
-
+        Log.e("totootot","fin onCreate")
 
     }
 
     fun launchCameraPicker(){
+        //TODO camera handler
 
     }
 
@@ -90,21 +90,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun resetTextParams(){
-        info_text_home.visibility=View.INVISIBLE // hide text
-
         Log.i("child", linearLayout.childCount.toString())
         LinearLayout(linearLayout.context).removeViewInLayout(info_text_home)
-
         Log.i("child", linearLayout.childCount.toString())
-
-
     }
 
     /**
-     * compress image before and display it
+     * compress image before and display it --->
      */
     fun showImage(data: Intent){
-        resetTextParams()
+        info_text_home.visibility=View.INVISIBLE // hide text
+        //resetTextParams()
         val contentUri = data.data
         try {
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, contentUri)
@@ -112,18 +108,23 @@ class MainActivity : AppCompatActivity() {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes)
             image_chosed.visibility=View.VISIBLE // show image view
             image_chosed.setImageBitmap(bitmap)
-            //TODO
+            //TODO  image compression
 
+            HomeFragment.CURRENT_IMAGE_CHOOSEN_URI=ImageUtils.getSmartFilePath(this,contentUri)
+
+            HtagSnackbar.make(this,container,HomeFragment.CURRENT_IMAGE_CHOOSEN_URI,Snackbar.LENGTH_LONG).show()
         }catch (e: IOException){
             e.stackTrace
         }
         api_button_caller.visibility= View.VISIBLE // show button_check too
+
+
     }
 
      override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_PHOTO && resultCode == Activity.RESULT_OK && data!=null) {
 
+        if (requestCode == PICK_PHOTO && resultCode == Activity.RESULT_OK && data!=null) {
              showImage(data)
         }
          else {
@@ -149,7 +150,6 @@ class MainActivity : AppCompatActivity() {
 
             R.id.action_exit ->{return true}
         }
-
         return super.onOptionsItemSelected(item)
     }
 
@@ -164,8 +164,8 @@ class MainActivity : AppCompatActivity() {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             if (position==0)
-                return HomeFragment.newInstance()
-            return LikeFragment.newInstance()
+                return HomeFragment()
+            return GalleryFragment()
 
         }
 
@@ -174,5 +174,4 @@ class MainActivity : AppCompatActivity() {
             return 2
         }
     }
-
 }
