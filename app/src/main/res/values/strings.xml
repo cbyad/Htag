@@ -1,15 +1,7 @@
 <resources>
 
-    <!-- Strings related to api -->
     <string name="app_name">Htag</string>
-    <string name="azure_api_endpoint">https://westeurope.api.cognitive.microsoft.com/vision/v1.0/tag</string>
-    <string name="deep_ai_api_key">6e5f23c0-bebe-4661-a587-e3640c158889</string>
-    <string name="azure_vision_api_key">276833e3df7243bbb6c7b4314232bc3d</string>
-    <string name="azure_vision_api_key_2">a660b5a802c145e1805233eae492c6e3</string>
 
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
     <string name="title_activity_main">Htag</string>
     <string name="action_settings">Settings</string>
     <string name="action_exit">Exit</string>

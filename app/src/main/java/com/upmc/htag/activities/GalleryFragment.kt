@@ -27,8 +27,8 @@ class GalleryFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_gallery_model, container, false)
 
-        listView = rootView.findViewById(R.id.gallery_list_view)
-        listView.setLayoutManager( LinearLayoutManager(rootView.context));
+        listView = rootView.findViewById<RecyclerView>(R.id.gallery_list_view)
+        listView.layoutManager =LinearLayoutManager(rootView.context)
         //listView.setAdapter(GalleryAdapter(taskLists,this))
 
 

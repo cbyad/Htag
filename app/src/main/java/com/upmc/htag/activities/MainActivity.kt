@@ -25,6 +25,9 @@ import java.io.IOException
 
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.google.gson.Gson
+import com.upmc.htag.persists.Data
+import com.upmc.htag.persists.StorageHandler
 import com.upmc.htag.utils.ImageUtils
 import com.upmc.htag.views.HtagSnackbar
 
@@ -34,8 +37,6 @@ class MainActivity : AppCompatActivity() {
      */
     val PICK_PHOTO = 1
     val INTENT_TYPE = "image/*"
-
-
 
 
     /**
@@ -71,28 +72,30 @@ class MainActivity : AppCompatActivity() {
             launchImagePicker()
         }
 
+        /*
         // photo_fab to capture an image
         photo_fab.setOnClickListener { launchCameraPicker() }
-        Log.e("totootot","fin onCreate")
+        */
 
+        /*
+            Open config file and save in memory in place
+         */
+        val fileContents = StorageHandler.readInternalFileConfig(applicationContext)
+        if (fileContents!=""){
+            val g : Gson = Gson()
+           var list = g.fromJson(fileContents, arrayListOf<Data>().javaClass)
+            StorageHandler.allTagsStored.addAll(list)
+        }
     }
 
     fun launchCameraPicker(){
         //TODO camera handler
-
     }
-
 
     fun launchImagePicker() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = INTENT_TYPE
         startActivityForResult(Intent.createChooser(intent,"...Select an image"), PICK_PHOTO)
-    }
-
-    fun resetTextParams(){
-        Log.i("child", linearLayout.childCount.toString())
-        LinearLayout(linearLayout.context).removeViewInLayout(info_text_home)
-        Log.i("child", linearLayout.childCount.toString())
     }
 
     /**
@@ -102,6 +105,8 @@ class MainActivity : AppCompatActivity() {
         info_text_home.visibility=View.INVISIBLE // hide text
         //resetTextParams()
         val contentUri = data.data
+            if (contentUri==null)
+                Log.e("erro","toto")
         try {
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, contentUri)
             val bytes = ByteArrayOutputStream()
@@ -116,9 +121,10 @@ class MainActivity : AppCompatActivity() {
         }catch (e: IOException){
             e.stackTrace
         }
+        //
         api_button_caller.visibility= View.VISIBLE // show button_check too
-
-
+        HomeFragment.tagList.clear()
+        tag_list_view.adapter.notifyDataSetChanged()
     }
 
      override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -153,7 +159,6 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-
     /**
      * A [FragmentPagerAdapter] that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -161,12 +166,10 @@ class MainActivity : AppCompatActivity() {
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
         override fun getItem(position: Int): Fragment {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
+
             if (position==0)
                 return HomeFragment()
             return GalleryFragment()
-
         }
 
         override fun getCount(): Int {

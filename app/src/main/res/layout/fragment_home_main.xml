@@ -1,46 +1,66 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+
+
     android:orientation="vertical"
-    tools:context="com.upmc.htag.activities.MainActivity">
+    tools:context="com.upmc.htag.activities.HomeFragment">
 
     <ImageView
+
+
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:id="@+id/image_chosed"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="invisible"
-        android:layout_weight="5"/>
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/custom_tag_view"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/api_button_caller"
-        android:text="@string/start_button"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="invisible"
-        android:background="@color/colorPrimary"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_below="@+id/image_chosed"
+        android:background="@color/secondaryDarkColor"
+        android:text="@string/start_button"
+        android:visibility="invisible" />
 
     <ProgressBar
-        android:visibility="gone"
-        android:layout_width="match_parent"
         android:id="@+id/progress_bar"
-        android:layout_height="wrap_content" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/api_button_caller"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:indeterminateTint="@color/primaryColor"
+        android:visibility="gone" />
+
 
     <TextView
         android:id="@+id/info_text_home"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4"
+        android:layout_height="60dp"
+        android:layout_below="@+id/progress_bar"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-       android:gravity="center_horizontal"
+        android:gravity="center"
         android:text="@string/choose_image"
         android:textSize="30sp"
-        android:visibility="visible"
-        />
+        android:visibility="visible" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/tag_list_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/api_button_caller"
+        android:visibility="gone">
+
+    </android.support.v7.widget.RecyclerView>
 
 
-
-
-</LinearLayout>
+</RelativeLayout>

@@ -11,7 +11,6 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
 
-
 /**
  * Created by cb_mac on 21/03/2018.
  */

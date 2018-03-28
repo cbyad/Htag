@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/appbar_padding_top"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.NoActionBar">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -63,6 +63,7 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_menu_gallery" />
 
+    <!--
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/photo_fab"
         android:layout_width="wrap_content"
@@ -78,5 +79,6 @@
         app:layout_anchorGravity="top"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_menu_camera" />
+    -->
 
 </android.support.design.widget.CoordinatorLayout>

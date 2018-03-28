@@ -6,4 +6,5 @@
 .DS_Store
 /build
 /captures
+/src/main/java/com/upmc/htag/persists/*
 .externalNativeBuild

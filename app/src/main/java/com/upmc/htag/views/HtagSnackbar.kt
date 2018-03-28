@@ -9,12 +9,9 @@ import java.time.Duration
 import android.graphics.Typeface
 import android.widget.TextView
 
-
-
 /**
  * Created by cb_mac on 21/03/2018.
  */
-
 
 class HtagSnackbar {
 
@@ -25,9 +22,6 @@ class HtagSnackbar {
             sb.view.setBackgroundColor(ContextCompat.getColor(ctx, R.color.material_blue_grey_900))
             (sb.view.findViewById(android.support.design.R.id.snackbar_text) as TextView).typeface
             return  sb
-
         }
-
     }
-
 }
