@@ -25,6 +25,7 @@ import java.io.IOException
 
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.upmc.htag.persists.Data
 import com.upmc.htag.persists.StorageHandler
@@ -80,12 +81,16 @@ class MainActivity : AppCompatActivity() {
         /*
             Open config file and save in memory in place
          */
+
+
         val fileContents = StorageHandler.readInternalFileConfig(applicationContext)
-        if (fileContents!=""){
-            val g : Gson = Gson()
-           var list = g.fromJson(fileContents, arrayListOf<Data>().javaClass)
+        if (!fileContents.isEmpty()){
+           var list = StorageHandler.parseJSONConfigFile(fileContents)
             StorageHandler.allTagsStored.addAll(list)
+            Log.e("main"," "+fileContents)
         }
+
+
     }
 
     fun launchCameraPicker(){
@@ -108,15 +113,14 @@ class MainActivity : AppCompatActivity() {
             if (contentUri==null)
                 Log.e("erro","toto")
         try {
-            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, contentUri)
-            val bytes = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bytes)
-            image_chosed.visibility=View.VISIBLE // show image view
-            image_chosed.setImageBitmap(bitmap)
-            //TODO  image compression
 
             HomeFragment.CURRENT_IMAGE_CHOOSEN_URI=ImageUtils.getSmartFilePath(this,contentUri)
 
+            Glide.with(this)
+                    .load(HomeFragment.CURRENT_IMAGE_CHOOSEN_URI)
+                    .into(image_chosed)
+
+            image_chosed.visibility=View.VISIBLE // show image view
             HtagSnackbar.make(this,container,HomeFragment.CURRENT_IMAGE_CHOOSEN_URI,Snackbar.LENGTH_LONG).show()
         }catch (e: IOException){
             e.stackTrace
@@ -154,7 +158,9 @@ class MainActivity : AppCompatActivity() {
         when(id) {
             R.id.action_settings -> {return true}
 
-            R.id.action_exit ->{return true}
+            R.id.action_exit ->{
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
     }

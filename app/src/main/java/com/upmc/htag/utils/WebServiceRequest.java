@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;
-import com.upmc.htag.persists.SecretValues;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,11 +25,15 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+
+/**
+ * upload image to api & handle server response
+ * the only java code
+ */
 public class WebServiceRequest {
     private static final String headerKey = "ocp-apim-subscription-key";
     private HttpClient client = new DefaultHttpClient();
     private String subscriptionKey ;
-    private Gson gson = new Gson();
 
     public WebServiceRequest(String key) {
         this.subscriptionKey = key;
@@ -49,6 +52,7 @@ public class WebServiceRequest {
         request.setHeader("Content-Type", contentType);
         request.setHeader(headerKey, this.subscriptionKey);
         request.setEntity(new ByteArrayEntity((byte[]) data.get("data")));
+
         HttpResponse response = this.client.execute(request);
 
         int statusCode = response.getStatusLine().getStatusCode();

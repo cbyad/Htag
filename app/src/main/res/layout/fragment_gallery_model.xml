@@ -2,10 +2,10 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
 
-    tools:context=".activities.MainActivity">
+    tools:context="com.upmc.htag.activities.GalleryFragment">
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteText"
@@ -21,7 +21,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/gallery_list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="8dp"
         android:layout_below="@id/autoCompleteText"/>

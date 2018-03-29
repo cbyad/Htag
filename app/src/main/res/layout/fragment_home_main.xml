@@ -24,10 +24,16 @@
     <Button
         android:id="@+id/api_button_caller"
         android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center"
         android:layout_below="@+id/image_chosed"
-        android:background="@color/secondaryDarkColor"
+        android:background="@color/primaryColor"
+
         android:text="@string/start_button"
+        android:textColor="@color/secondaryDarkColor"
         android:visibility="invisible" />
 
     <ProgressBar

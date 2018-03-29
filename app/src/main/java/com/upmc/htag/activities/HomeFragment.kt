@@ -2,6 +2,7 @@ package com.upmc.htag.activities
 
 import android.os.AsyncTask
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -9,10 +10,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationSet
-import android.view.animation.AnimationUtils
 import android.widget.Button
+import android.widget.GridView
 import android.widget.ImageView
 import android.widget.ProgressBar
 import com.google.gson.Gson
@@ -25,14 +24,9 @@ import com.upmc.htag.persists.StorageHandler
 import com.upmc.htag.utils.JSONHandler
 import kotlinx.android.synthetic.main.fragment_home_main.view.*
 import java.io.*
-import java.net.HttpURLConnection
-import java.net.URL
-import java.net.URLConnection
 import com.upmc.htag.utils.WebServiceRequest
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.*
+import com.upmc.htag.views.HtagSnackbar
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.collections.ArrayList
 
 
@@ -50,8 +44,6 @@ class HomeFragment : Fragment() {
     /**
      * API Request parameters
      */
-    lateinit var azureVisionUrl: String
-    lateinit var azureVisionKey: String
     var backCode: Int = 0
     var response: String = ""
     val CONNECTION_TIMEOUT_MILLISECONDS: Int = 8000
@@ -59,7 +51,7 @@ class HomeFragment : Fragment() {
     var outputStream: OutputStream? = null
     var writer: PrintWriter? = null
     val charset: String = "UTF-8"
-    val BUFFER_SIZE: Int = 4096
+
 
     /**
      * components views
@@ -77,7 +69,6 @@ class HomeFragment : Fragment() {
     companion object {
         var tagList: ArrayList<Tag> = arrayListOf()
         var CURRENT_IMAGE_CHOOSEN_URI: String = ""
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -95,8 +86,7 @@ class HomeFragment : Fragment() {
         tagListView.layoutManager = GridLayoutManager(rootView.context, NUMBER_OF_COLUMNS)
 
 
-        azureVisionUrl = SecretValues.azure_api_endpoint
-        azureVisionKey = SecretValues.azure_vision_api_key
+
 
         apiButton.setOnClickListener {
             tagListView.visibility = View.VISIBLE
@@ -127,16 +117,25 @@ class HomeFragment : Fragment() {
 
         override fun onPostExecute(result: String) {
             super.onPostExecute(result)
-            tagListView.getRecycledViewPool().clear() // this is very useful
+            tagListView.recycledViewPool.clear() // this is very useful
             tagList.clear()
             tagList.addAll(JSONHandler.parseJSONResponseAPI(result))
             tagListView.adapter.notifyDataSetChanged()
             progressBar.visibility = View.GONE
-
+            val tagsMsg = ""+ tagList.size + " tag(s) found"
+            HtagSnackbar.make(context,tagListView.rootView ,tagsMsg, Snackbar.LENGTH_LONG).show()
             /*
             *  Save all in file
             */
 
+            /*
+            tagList.forEach{elt-> StorageHandler.allTagsStored.add(Data(elt.name,elt.confidence, CURRENT_IMAGE_CHOOSEN_URI))
+            }
+
+            val g = Gson()
+            val str = StorageHandler.begin+g.toJson(StorageHandler.allTagsStored)+StorageHandler.end
+            StorageHandler.writeInternalFileConfig(str,context)
+        */
 
         }
 
