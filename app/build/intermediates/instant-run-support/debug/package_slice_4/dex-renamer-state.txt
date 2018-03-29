@@ -1,4 +1,0 @@
-#Thu Mar 29 01:48:12 CEST 2018
-base.0=/Users/cb_mac/Desktop/UPMC/M2/TPALT/PROJET/app/build/intermediates/transforms/dexMerger/debug/62
-path.0=classes.dex
-renamed.0=classes.dex
