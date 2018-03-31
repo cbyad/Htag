@@ -27,6 +27,7 @@ import java.io.*
 import com.upmc.htag.utils.WebServiceRequest
 import com.upmc.htag.views.HtagSnackbar
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_gallery_model.*
 import kotlin.collections.ArrayList
 
 
@@ -85,9 +86,6 @@ class HomeFragment : Fragment() {
         tagListView.adapter = TagAdapter(tagList, rootView.context)
         tagListView.layoutManager = GridLayoutManager(rootView.context, NUMBER_OF_COLUMNS)
 
-
-
-
         apiButton.setOnClickListener {
             tagListView.visibility = View.VISIBLE
             ApiRequestHandler().execute()
@@ -97,14 +95,12 @@ class HomeFragment : Fragment() {
     }
 
     inner class ApiRequestHandler : AsyncTask<String, Void, String>() {
-
         override fun onPreExecute() {
             super.onPreExecute()
             progressBar.visibility = View.VISIBLE
         }
 
         override fun doInBackground(vararg params: String): String {
-
             val inputStream = FileInputStream(CURRENT_IMAGE_CHOOSEN_URI)
             var webServiceInstance = WebServiceRequest(SecretValues.azure_vision_api_key)
             return webServiceInstance.callAzureApi(SecretValues.azure_api_endpoint,
@@ -122,23 +118,29 @@ class HomeFragment : Fragment() {
             tagList.addAll(JSONHandler.parseJSONResponseAPI(result))
             tagListView.adapter.notifyDataSetChanged()
             progressBar.visibility = View.GONE
-            val tagsMsg = ""+ tagList.size + " tag(s) found"
-            HtagSnackbar.make(context,tagListView.rootView ,tagsMsg, Snackbar.LENGTH_LONG).show()
-            /*
-            *  Save all in file
-            */
+            val tagsMsg = "" + tagList.size + " tag(s) found"
+            HtagSnackbar.make(context, tagListView.rootView, tagsMsg, Snackbar.LENGTH_LONG).show()
 
-            /*
-            tagList.forEach{elt-> StorageHandler.allTagsStored.add(Data(elt.name,elt.confidence, CURRENT_IMAGE_CHOOSEN_URI))
+            /**
+             * Save each response in memory--->    double value !!!
+             */
+
+            // is the best place to do it ?
+            tagList.forEach { elt ->
+                StorageHandler.allTagsStored.add(Data(elt.name, elt.confidence, CURRENT_IMAGE_CHOOSEN_URI))
             }
+            GalleryFragment.populateImageAndTagList()
+            GalleryFragment.galleryListView.adapter.notifyDataSetChanged()
+            //notify gallery list
 
+            /*
             val g = Gson()
             val str = StorageHandler.begin+g.toJson(StorageHandler.allTagsStored)+StorageHandler.end
             StorageHandler.writeInternalFileConfig(str,context)
-        */
+            */
+
 
         }
-
     }
 
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import com.upmc.htag.R
 import com.upmc.htag.models.MediaContent
 import com.bumptech.glide.Glide
@@ -42,27 +43,22 @@ class GalleryAdapter(val medias: ArrayList<MediaContent>, val context: Context) 
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private var currentMedia: MediaContent? = null
-
          var mPhotoImageView : ImageView
+        var mTag : TextView
 
         init {
             mPhotoImageView= view.findViewById(R.id.iv_photo)
+            mTag=view.findViewById(R.id.iv_photo_tags)
 
-            /**
-             * TODO
-             */
         }
 
         fun display(media: MediaContent, ctx : Context) {
-
             currentMedia=media
-            Log.e("SRC--->",media.src)
+            mTag.text=media.title
             Glide.with(ctx)
                     .load(media.src)
+                    .error(R.drawable.ic_launcher_background)
                     .into(mPhotoImageView)
-
-
         }
-
     }
 }

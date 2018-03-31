@@ -37,6 +37,8 @@ class MainActivity : AppCompatActivity() {
      *
      */
     val PICK_PHOTO = 1
+
+
     val INTENT_TYPE = "image/*"
 
 
@@ -62,103 +64,117 @@ class MainActivity : AppCompatActivity() {
         // Set up the ViewPager with the sections adapter.
         container.adapter = mSectionsPagerAdapter
 
+
         container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
 
         // gallery_thumb to pick content from file system
-        gallery_fab.setOnClickListener { /*view ->
-            //TODO add function to pick content from file system
-            Snackbar.make(view, "Cafard vert", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show() */
-            launchImagePicker()
-        }
+        gallery_fab.setOnClickListener { launchImagePicker() }
 
         /*
         // photo_fab to capture an image
         photo_fab.setOnClickListener { launchCameraPicker() }
         */
 
-        /*
-            Open config file and save in memory in place
+        // put in a async task after
+
+        /**
+         * Open config file (htag.json) and load into memory (allTagsStored)
+         * if this app is launched the first time then create config file
          */
 
+        if (StorageHandler.isfileExist(applicationContext)) {
+            HtagSnackbar.make(this, container, StorageHandler.filename + " is loaded", Snackbar.LENGTH_SHORT)
+                    .show()
+            val fileContents = StorageHandler.readInternalFileConfig(applicationContext)
+            if (!fileContents.isEmpty()) {
+                var list = StorageHandler.parseJSONConfigFile(fileContents)
+                StorageHandler.allTagsStored.addAll(list)
 
-        val fileContents = StorageHandler.readInternalFileConfig(applicationContext)
-        if (!fileContents.isEmpty()){
-           var list = StorageHandler.parseJSONConfigFile(fileContents)
-            StorageHandler.allTagsStored.addAll(list)
-            Log.e("main"," "+fileContents)
+                Log.e("HTAG", " " + fileContents)
+            }
+        } else {
+            val updateData = StorageHandler.begin + Gson().toJson(StorageHandler.allTagsStored) + StorageHandler.end
+            StorageHandler.writeInternalFileConfig(updateData, this)
+            HtagSnackbar.make(this, container, StorageHandler.filename + " is created",
+                    Snackbar.LENGTH_SHORT)
+                    .show()
         }
-
-
     }
 
-    fun launchCameraPicker(){
+    override fun onDestroy() {
+        super.onDestroy()
+        /**before exit program save all new data into htag.json*/
+        val removeDuplicate = StorageHandler.allTagsStored.distinctBy { listOf(it.confidence, it.name, it.path) }
+        val updateData = StorageHandler.begin + Gson().toJson(removeDuplicate) + StorageHandler.end
+        StorageHandler.writeInternalFileConfig(updateData, this)
+    }
+
+    fun launchCameraPicker() {
         //TODO camera handler
     }
 
     fun launchImagePicker() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = INTENT_TYPE
-        startActivityForResult(Intent.createChooser(intent,"...Select an image"), PICK_PHOTO)
+        startActivityForResult(Intent.createChooser(intent, "...Select an image"), PICK_PHOTO)
     }
 
     /**
      * compress image before and display it --->
      */
-    fun showImage(data: Intent){
-        info_text_home.visibility=View.INVISIBLE // hide text
+    fun showImage(data: Intent) {
+        info_text_home.visibility = View.INVISIBLE // hide text
         //resetTextParams()
         val contentUri = data.data
-            if (contentUri==null)
-                Log.e("erro","toto")
-        try {
+        if (contentUri == null)
 
-            HomeFragment.CURRENT_IMAGE_CHOOSEN_URI=ImageUtils.getSmartFilePath(this,contentUri)
+            try {
+                HomeFragment.CURRENT_IMAGE_CHOOSEN_URI = ImageUtils.getSmartFilePath(this, contentUri)
+                Glide.with(this)
+                        .load(HomeFragment.CURRENT_IMAGE_CHOOSEN_URI)
+                        .into(image_chosed)
 
-            Glide.with(this)
-                    .load(HomeFragment.CURRENT_IMAGE_CHOOSEN_URI)
-                    .into(image_chosed)
-
-            image_chosed.visibility=View.VISIBLE // show image view
-            HtagSnackbar.make(this,container,HomeFragment.CURRENT_IMAGE_CHOOSEN_URI,Snackbar.LENGTH_LONG).show()
-        }catch (e: IOException){
-            e.stackTrace
-        }
+                image_chosed.visibility = View.VISIBLE // show image view
+                HtagSnackbar.make(this, container, HomeFragment.CURRENT_IMAGE_CHOOSEN_URI, Snackbar.LENGTH_LONG).show()
+            } catch (e: IOException) {
+                e.stackTrace
+            }
         //
-        api_button_caller.visibility= View.VISIBLE // show button_check too
+        api_button_caller.visibility = View.VISIBLE // show button_check too
         HomeFragment.tagList.clear()
         tag_list_view.adapter.notifyDataSetChanged()
     }
 
-     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == PICK_PHOTO && resultCode == Activity.RESULT_OK && data!=null) {
-             showImage(data)
-        }
-         else {
+        if (requestCode == PICK_PHOTO && resultCode == Activity.RESULT_OK && data != null) {
+            showImage(data)
+        } else {
             //Display error and exit
             return
         }
     }
 
+    /*
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
-
+*/
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         val id = item.itemId
+        when (id) {
+            R.id.action_settings -> {
+                return true
+            }
 
-        when(id) {
-            R.id.action_settings -> {return true}
-
-            R.id.action_exit ->{
+            R.id.action_exit -> {
                 return true
             }
         }
@@ -173,7 +189,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun getItem(position: Int): Fragment {
 
-            if (position==0)
+            if (position == 0)
                 return HomeFragment()
             return GalleryFragment()
         }
@@ -183,4 +199,5 @@ class MainActivity : AppCompatActivity() {
             return 2
         }
     }
+
 }

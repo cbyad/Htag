@@ -21,14 +21,24 @@ object StorageHandler {
     fun writeInternalFileConfig(fileContents: String, ctx: Context) {
         ctx.openFileOutput(filename, Context.MODE_PRIVATE).use {
             it.write(fileContents.toByteArray())
+
         }
     }
 
-    fun readInternalFileConfig(ctx: Context): String {
+    fun isfileExist(ctx: Context): Boolean{
+        val file = ctx.getFileStreamPath(filename)
+        file.delete()
+        return file.exists()
+    }
 
-        val eof = System.getProperty("lines.separator")
-        val inputStream: InputStream = File(ctx.getFilesDir(), filename).inputStream()
-        return inputStream.bufferedReader().use { it.readText() }
+
+
+
+    fun readInternalFileConfig(ctx: Context): String {
+            //val eof = System.getProperty("lines.separator")
+            val inputStream: InputStream = File(ctx.getFilesDir(), filename).inputStream()
+            return inputStream.bufferedReader().use { it.readText() }
+
     }
 
 
@@ -45,16 +55,26 @@ object StorageHandler {
 
                 val name: String = currentDataObject.optString("name")
                 val confidence: Double = currentDataObject.optDouble("confidence")
-                val src : String =currentDataObject.optString("path")
+                val src: String = currentDataObject.optString("path")
                 //then add them to our list
-                val elt = Data(name,confidence,src)
+                val elt = Data(name, confidence, src)
                 assocList.add(elt)
             }
-        } catch (e : JSONException){
-            Log.e("JSON error","Error while parsing JSON"+ e.message)
+        } catch (e: JSONException) {
+            Log.e("JSON error", "Error while parsing JSON" + e.message)
         }
 
         return assocList
+    }
+
+    fun getImagesPathsWithTags(tag: String): ArrayList<String> {
+        var paths = arrayListOf<String>()
+        StorageHandler.allTagsStored.forEach { elt ->
+            if (elt.name == tag) {
+                paths.add(elt.path)
+            }
+        }
+        return paths
     }
 
 }

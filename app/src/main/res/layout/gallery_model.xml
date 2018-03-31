@@ -11,5 +11,12 @@
         android:scaleType="centerCrop"
         android:layout_margin="2dp"
         android:layout_width="match_parent"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:adjustViewBounds="true"
+        android:id="@+id/iv_photo_tags"
+        android:gravity="center"
+        android:layout_margin="2dp"
+        android:layout_height="20dp" />
 
 </LinearLayout>
