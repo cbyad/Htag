@@ -4,7 +4,9 @@
 
     <string name="title_activity_main">Htag</string>
     <string name="action_settings">Settings</string>
-    <string name="action_exit">Exit</string>
+    <string name="action_delete">Delete</string>
+    <string name="large_image">Sorry your image is too huge !!</string>
+    <string name="not_foung_image">Sorry image not found !!</string>
 
     <string name="action_saved">Saved</string>
     <string name="tab_item_home">Home</string>

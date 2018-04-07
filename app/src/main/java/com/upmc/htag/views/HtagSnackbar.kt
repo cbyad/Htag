@@ -19,7 +19,7 @@ class HtagSnackbar {
 
         fun make(ctx : Context , view: View, text: String, duration: Int) : Snackbar{
             var sb : Snackbar = Snackbar.make(view,text,duration)
-            sb.view.setBackgroundColor(ContextCompat.getColor(ctx, R.color.material_blue_grey_900))
+            sb.view.setBackgroundColor(ContextCompat.getColor(ctx, R.color.primaryLightColor))
             (sb.view.findViewById(android.support.design.R.id.snackbar_text) as TextView).typeface
             return  sb
         }

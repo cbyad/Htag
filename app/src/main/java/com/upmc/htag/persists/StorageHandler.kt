@@ -21,34 +21,35 @@ object StorageHandler {
     fun writeInternalFileConfig(fileContents: String, ctx: Context) {
         ctx.openFileOutput(filename, Context.MODE_PRIVATE).use {
             it.write(fileContents.toByteArray())
-
         }
     }
 
     fun isfileExist(ctx: Context): Boolean{
         val file = ctx.getFileStreamPath(filename)
-        file.delete()
+        return file.exists()
+    }
+    fun isfileExist(ctx: Context, file :String): Boolean{
+        val file = ctx.getFileStreamPath(file)
         return file.exists()
     }
 
-
-
+    fun reset(ctx: Context){
+        val file = ctx.getFileStreamPath(filename)
+        file.delete()
+    }
 
     fun readInternalFileConfig(ctx: Context): String {
             //val eof = System.getProperty("lines.separator")
             val inputStream: InputStream = File(ctx.getFilesDir(), filename).inputStream()
             return inputStream.bufferedReader().use { it.readText() }
-
     }
-
 
     fun parseJSONConfigFile(jsonContent: String): java.util.ArrayList<Data> {
         val assocList: java.util.ArrayList<Data> = arrayListOf()
         try {
             val reader = JSONObject(jsonContent)
             val tagsArray: JSONArray = reader.getJSONArray("tags")
-            //Log.e(TAG," tableau size"+ tasArray.length())
-            // iterate throught the content
+
             /* equivalent to i in 0 */
             for (i in 0 until tagsArray.length()) {
                 val currentDataObject: JSONObject = tagsArray.getJSONObject(i)

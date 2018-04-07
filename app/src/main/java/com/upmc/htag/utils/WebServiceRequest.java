@@ -4,14 +4,11 @@ package com.upmc.htag.utils;
  * Created by cb_mac on 27/03/2018.
  */
 
-
 import android.util.Log;
 
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,7 +21,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-
 
 /**
  * upload image to api & handle server response
@@ -39,14 +35,14 @@ public class WebServiceRequest {
         this.subscriptionKey = key;
     }
 
-    public String callAzureApi (String url ,String contentType, InputStream stream) throws Exception{
+    public String callAzureApi (String url ,String contentType, InputStream stream) throws IOException{
         byte[] data = IOUtils.toByteArray(stream);
         Map<String, Object> params = new HashMap<>();
         params.put("data", data);
         return webInvoke(url,params,contentType);
     }
 
-    private String webInvoke(String url, Map<String, Object> data, String contentType) throws Exception {
+    private String webInvoke(String url, Map<String, Object> data, String contentType) throws IOException {
 
         HttpPost request = new HttpPost(url);
         request.setHeader("Content-Type", contentType);
@@ -60,14 +56,15 @@ public class WebServiceRequest {
         if (statusCode == HttpURLConnection.HTTP_OK) {
             return readInput(response.getEntity().getContent());
 
-        } else if (statusCode == HttpURLConnection.HTTP_ACCEPTED) {
-            return response.getFirstHeader("Operation-Location").getValue();
         }
         else if (statusCode== HttpURLConnection.HTTP_UNSUPPORTED_TYPE){
             return "Unsupported media type";
         }
+        else if (statusCode == HttpURLConnection.HTTP_BAD_REQUEST) {
+            return response.getFirstHeader("BadRequest").getValue();
+        }
         else {
-            throw new Exception("Error executing POST request! Received error code: " +
+            throw new IOException("Error executing POST request! Received error code: " +
                     response.getStatusLine().getStatusCode());
         }
 }

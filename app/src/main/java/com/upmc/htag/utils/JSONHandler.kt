@@ -11,11 +11,7 @@ import java.util.ArrayList
  * Created by cb_mac on 25/03/2018.
  */
 
-/*
-Supported image formats: JPEG, PNG, GIF, BMP.
-Image file size must be less than 4MB.
-Image dimensions should be greater than 50 x 50
-*/
+
 object JSONHandler {
     val TAG = this.javaClass.simpleName
 
@@ -35,17 +31,30 @@ object JSONHandler {
 
                 val name: String = currentTagObject.optString("name")
                 val confidence: Double = currentTagObject.optDouble("confidence")
-                val hint : String =currentTagObject.optString("hint")
+                val hint: String = currentTagObject.optString("hint")
                 //then add them to our list
-                val elt = Tag(name,confidence)
+                val elt = Tag(name, confidence)
                 assocList.add(elt)
             }
-        } catch (e : JSONException){
-            Log.e("JSON error","Error while parsing JSON"+ e.message)
+        } catch (e: JSONException) {
+            Log.e("JSON error", "Error while parsing JSON" + e.message)
         }
 
         return assocList
     }
 
+
+    fun detectAdultContent(jsonContent: String): Boolean {
+        var isAdultContent = false
+        try {
+            val reader = JSONObject(jsonContent)
+            val adultObject = reader.getJSONObject("adult")
+
+            isAdultContent = adultObject.getBoolean("isAdultContent")
+        } catch (e: JSONException) {
+            Log.e("JSON error", "Error while parsing JSON" + e.message)
+        }
+        return isAdultContent
+    }
 
 }

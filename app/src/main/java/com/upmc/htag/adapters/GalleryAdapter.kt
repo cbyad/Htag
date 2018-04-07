@@ -12,14 +12,8 @@ import com.upmc.htag.R
 import com.upmc.htag.models.MediaContent
 import com.bumptech.glide.Glide
 
-
-
 /**
- * Created by cb_mac on 22/02/2018.
- */
-
-/**
- * Class to display content saved by user
+ * Class to display image checked by user
  */
 class GalleryAdapter(val medias: ArrayList<MediaContent>, val context: Context) :
         RecyclerView.Adapter<GalleryAdapter.MyViewHolder>() {
@@ -57,7 +51,6 @@ class GalleryAdapter(val medias: ArrayList<MediaContent>, val context: Context) 
             mTag.text=media.title
             Glide.with(ctx)
                     .load(media.src)
-                    .error(R.drawable.ic_launcher_background)
                     .into(mPhotoImageView)
         }
     }

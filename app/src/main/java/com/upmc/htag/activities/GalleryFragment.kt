@@ -1,9 +1,9 @@
 package com.upmc.htag.activities
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.util.Log
@@ -42,10 +42,8 @@ class GalleryFragment : Fragment(), SearchView.OnQueryTextListener, MenuItem.OnA
 
         fun populateImageAndTagList() {
             imageList.clear()
-            StorageHandler.allTagsStored.
-                    distinctBy { listOf(it.confidence,it.name,it.path) }
-                    .forEach { elt-> imageList.add(MediaContent(elt.path,elt.name)) }
-            StorageHandler.allTagsStored.forEach { it -> tagList.add(it.name) }
+            StorageHandler.allTagsStored.distinctBy { listOf(it.confidence, it.name, it.path) }
+                    .forEach { elt -> imageList.add(MediaContent(elt.path, elt.name)); tagList.add(elt.name) }
         }
     }
 
@@ -61,7 +59,6 @@ class GalleryFragment : Fragment(), SearchView.OnQueryTextListener, MenuItem.OnA
 
         galleryListView = rootView.findViewById(R.id.gallery_list_view)
         galleryListView.layoutManager = GridLayoutManager(rootView.context, NUMBER_OF_COLUMNS)
-
         galleryListView.adapter = GalleryAdapter(imageList, rootView.context)
         return rootView
     }
@@ -83,6 +80,43 @@ class GalleryFragment : Fragment(), SearchView.OnQueryTextListener, MenuItem.OnA
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        val id = item.itemId
+        when (id) {
+            R.id.action_settings -> {
+                val grids = arrayOf<String>("2", "4", "6")
+                var builder: AlertDialog.Builder = AlertDialog.Builder(context)
+
+                builder.setTitle("Number of grids")
+                        .setCancelable(true)
+                        .setItems(grids) { dialog, which ->
+                            // the user clicked on grids[which]
+                            val number: Int = (grids[which]).toInt()
+                            galleryListView.layoutManager = GridLayoutManager(context, number)
+                        }.show()
+                return true
+            }
+
+            R.id.action_delete -> {
+                var builder: AlertDialog.Builder = AlertDialog.Builder(context)
+
+                builder.setMessage("Are you sure ?").setCancelable(true)
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("Delete") { dialog, which ->
+                            StorageHandler.reset(context)
+                            StorageHandler.allTagsStored.clear()
+                            imageList.clear()
+                            galleryListView.adapter.notifyDataSetChanged()
+                        }.show()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onQueryTextSubmit(query: String?): Boolean {
         return true
     }
@@ -97,18 +131,32 @@ class GalleryFragment : Fragment(), SearchView.OnQueryTextListener, MenuItem.OnA
         var filteredValues = arrayListOf<String>()
         tagList.forEach { it -> filteredValues.add(it) } // copy
         tagList.forEach { it ->
-            if (!it.toLowerCase().contains(newText.toLowerCase())) {
+            if (!it.toLowerCase().startsWith(newText.toLowerCase())) {
                 filteredValues.remove(it) // remove don't match pattern
             }
         }
 
-        if (filteredValues.isNotEmpty()) { // contain just 1 element
+        if (filteredValues.isNotEmpty()) {
             var newImageList = arrayListOf<MediaContent>()
 
-            imageList.filter { it-> filteredValues[0] == it.title }
-                    .forEach { elt-> newImageList.add(MediaContent(elt.src,elt.title)) }
+            val sizeOfFiltered = filteredValues.size
+/*
+            for(i in 0 until sizeOfFiltered){
+                for (j in 0 until imageList.size){
+                    if(filteredValues[i]== imageList[j].title){
+                        newImageList.add(MediaContent(imageList[j].src, imageList[j].title))
+                    }
+                }
+            }
+ */
+            imageList.filter { it -> filteredValues[0] == it.title }
+                    .forEach { elt -> newImageList.add(MediaContent(elt.src, elt.title)) }
+
             imageList.clear()
             imageList.addAll(newImageList)
+            galleryListView.adapter.notifyDataSetChanged()
+        } else {
+            imageList.clear()
             galleryListView.adapter.notifyDataSetChanged()
         }
 

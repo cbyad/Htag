@@ -11,10 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.GridView
 import android.widget.ImageView
 import android.widget.ProgressBar
-import com.google.gson.Gson
 import com.upmc.htag.R
 import com.upmc.htag.adapters.TagAdapter
 import com.upmc.htag.models.Tag
@@ -26,8 +24,7 @@ import kotlinx.android.synthetic.main.fragment_home_main.view.*
 import java.io.*
 import com.upmc.htag.utils.WebServiceRequest
 import com.upmc.htag.views.HtagSnackbar
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_gallery_model.*
+import org.apache.commons.io.IOUtils
 import kotlin.collections.ArrayList
 
 
@@ -38,7 +35,11 @@ import kotlin.collections.ArrayList
 /**
  * A placeholder fragment containing a simple view.
  */
-
+/*
+Supported image formats: JPEG, PNG, GIF, BMP.
+Image file size must be less than 4MB.
+Image dimensions should be greater than 50 x 50
+*/
 class HomeFragment : Fragment() {
     private val TAG: String = HomeFragment.javaClass.simpleName
 
@@ -52,6 +53,7 @@ class HomeFragment : Fragment() {
     var outputStream: OutputStream? = null
     var writer: PrintWriter? = null
     val charset: String = "UTF-8"
+    val MAXIMUM_BYTES = 400000 // maximum value granted by the api
 
 
     /**
@@ -87,9 +89,16 @@ class HomeFragment : Fragment() {
         tagListView.layoutManager = GridLayoutManager(rootView.context, NUMBER_OF_COLUMNS)
 
         apiButton.setOnClickListener {
-            tagListView.visibility = View.VISIBLE
-            ApiRequestHandler().execute()
-            it.visibility = View.GONE
+            
+            val input = FileInputStream(CURRENT_IMAGE_CHOOSEN_URI)
+            val size = IOUtils.toByteArray(input).size
+            if (size >= MAXIMUM_BYTES) {
+                HtagSnackbar.make(context, rootView, getString(R.string.large_image), Snackbar.LENGTH_LONG).show()
+            } else {
+                ApiRequestHandler().execute()
+                it.visibility = View.GONE
+                tagListView.visibility = View.VISIBLE
+            }
         }
         return rootView
     }
@@ -102,6 +111,7 @@ class HomeFragment : Fragment() {
 
         override fun doInBackground(vararg params: String): String {
             val inputStream = FileInputStream(CURRENT_IMAGE_CHOOSEN_URI)
+
             var webServiceInstance = WebServiceRequest(SecretValues.azure_vision_api_key)
             return webServiceInstance.callAzureApi(SecretValues.azure_api_endpoint,
                     "application/octet-stream", inputStream)
@@ -125,20 +135,19 @@ class HomeFragment : Fragment() {
              * Save each response in memory--->    double value !!!
              */
 
-            // is the best place to do it ?
             tagList.forEach { elt ->
                 StorageHandler.allTagsStored.add(Data(elt.name, elt.confidence, CURRENT_IMAGE_CHOOSEN_URI))
             }
             GalleryFragment.populateImageAndTagList()
             GalleryFragment.galleryListView.adapter.notifyDataSetChanged()
-            //notify gallery list
 
             /*
-            val g = Gson()
-            val str = StorageHandler.begin+g.toJson(StorageHandler.allTagsStored)+StorageHandler.end
-            StorageHandler.writeInternalFileConfig(str,context)
+            if(JSONHandler.detectAdultContent(WebServiceRequest(SecretValues.azure_vision_api_key).
+                            callAzureApi(SecretValues.adult_verif_api_endpoint,"application/octet-stream",
+                                    FileInputStream(CURRENT_IMAGE_CHOOSEN_URI)))){
+                Log.e(TAG,"adult!!!!!")
+            }
             */
-
 
         }
     }

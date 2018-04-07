@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import android.provider.MediaStore
 import android.support.design.widget.Snackbar
 import android.util.Log
@@ -37,8 +38,6 @@ class MainActivity : AppCompatActivity() {
      *
      */
     val PICK_PHOTO = 1
-
-
     val INTENT_TYPE = "image/*"
 
 
@@ -100,6 +99,13 @@ class MainActivity : AppCompatActivity() {
                     Snackbar.LENGTH_SHORT)
                     .show()
         }
+
+
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        HomeFragment()
     }
 
     override fun onDestroy() {
@@ -125,26 +131,29 @@ class MainActivity : AppCompatActivity() {
      */
     fun showImage(data: Intent) {
         info_text_home.visibility = View.INVISIBLE // hide text
-        //resetTextParams()
+
         val contentUri = data.data
         if (contentUri == null)
+            Log.e("erro", "toto")
+        try {
 
-            try {
-                HomeFragment.CURRENT_IMAGE_CHOOSEN_URI = ImageUtils.getSmartFilePath(this, contentUri)
-                Glide.with(this)
-                        .load(HomeFragment.CURRENT_IMAGE_CHOOSEN_URI)
-                        .into(image_chosed)
+            HomeFragment.CURRENT_IMAGE_CHOOSEN_URI = ImageUtils.getSmartFilePath(this, contentUri)
 
-                image_chosed.visibility = View.VISIBLE // show image view
-                HtagSnackbar.make(this, container, HomeFragment.CURRENT_IMAGE_CHOOSEN_URI, Snackbar.LENGTH_LONG).show()
-            } catch (e: IOException) {
-                e.stackTrace
-            }
+            Glide.with(this)
+                    .load(HomeFragment.CURRENT_IMAGE_CHOOSEN_URI)
+                    .into(image_chosed)
+
+            image_chosed.visibility = View.VISIBLE // show image view
+            HtagSnackbar.make(this, container, HomeFragment.CURRENT_IMAGE_CHOOSEN_URI, Snackbar.LENGTH_LONG).show()
+        } catch (e: IOException) {
+            e.stackTrace
+        }
         //
         api_button_caller.visibility = View.VISIBLE // show button_check too
         HomeFragment.tagList.clear()
         tag_list_view.adapter.notifyDataSetChanged()
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -155,30 +164,6 @@ class MainActivity : AppCompatActivity() {
             //Display error and exit
             return
         }
-    }
-
-    /*
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-*/
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-        when (id) {
-            R.id.action_settings -> {
-                return true
-            }
-
-            R.id.action_exit -> {
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     /**
