@@ -1,5 +1,6 @@
 package com.upmc.htag.activities
 
+import android.Manifest
 import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
 
@@ -7,28 +8,23 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 
 import com.upmc.htag.R
 import kotlinx.android.synthetic.main.activity_main.*
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.os.Build
-import android.provider.MediaStore
+import android.content.pm.PackageManager
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import kotlinx.android.synthetic.main.fragment_home_main.*
-import java.io.ByteArrayOutputStream
 import java.io.IOException
 
-import android.widget.LinearLayout
-import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.gson.Gson
-import com.upmc.htag.persists.Data
 import com.upmc.htag.persists.StorageHandler
 import com.upmc.htag.utils.ImageUtils
 import com.upmc.htag.views.HtagSnackbar
@@ -39,7 +35,7 @@ class MainActivity : AppCompatActivity() {
      */
     val PICK_PHOTO = 1
     val INTENT_TYPE = "image/*"
-
+     val REQUEST_CODE = 101
 
     /**
      * The [android.support.v4.view.PagerAdapter] that will provide
@@ -55,8 +51,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         setSupportActionBar(findViewById(R.id.toolbar))
-        // Create the adapter that will return a fragment for each of the three
+
+
+        // Create the adapter that will return a fragment for each
         // primary sections of the activity.
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
@@ -75,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         photo_fab.setOnClickListener { launchCameraPicker() }
         */
 
-        // put in a async task after
+        setupPermissions()
 
         /**
          * Open config file (htag.json) and load into memory (allTagsStored)
@@ -83,7 +82,7 @@ class MainActivity : AppCompatActivity() {
          */
 
         if (StorageHandler.isfileExist(applicationContext)) {
-            HtagSnackbar.make(this, container, StorageHandler.filename + " is loaded", Snackbar.LENGTH_SHORT)
+            HtagSnackbar.make(this, container, getString(R.string.loaded), Snackbar.LENGTH_SHORT)
                     .show()
             val fileContents = StorageHandler.readInternalFileConfig(applicationContext)
             if (!fileContents.isEmpty()) {
@@ -95,18 +94,44 @@ class MainActivity : AppCompatActivity() {
         } else {
             val updateData = StorageHandler.begin + Gson().toJson(StorageHandler.allTagsStored) + StorageHandler.end
             StorageHandler.writeInternalFileConfig(updateData, this)
-            HtagSnackbar.make(this, container, StorageHandler.filename + " is created",
+            HtagSnackbar.make(this, container, StorageHandler.filename + getString(R.string.welcome),
                     Snackbar.LENGTH_SHORT)
                     .show()
         }
 
+    }
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            REQUEST_CODE -> {
 
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    this.finish()
+                    System.exit(0)
+
+                } else {
+                    HtagSnackbar.make(this,container,"permission has been granted",Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        HomeFragment()
+    private fun setupPermissions() {
+        val permission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            HtagSnackbar.make(this,container,"permission not granted",Snackbar.LENGTH_INDEFINITE).show()
+            makeRequest()
+        }
     }
+
+    private fun makeRequest() {
+        ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                REQUEST_CODE)
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -126,21 +151,20 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(Intent.createChooser(intent, "...Select an image"), PICK_PHOTO)
     }
 
-    /**
-     * compress image before and display it --->
-     */
     fun showImage(data: Intent) {
         info_text_home.visibility = View.INVISIBLE // hide text
 
         val contentUri = data.data
         if (contentUri == null)
-            Log.e("erro", "toto")
+            Log.e("error", "error")
         try {
 
             HomeFragment.CURRENT_IMAGE_CHOOSEN_URI = ImageUtils.getSmartFilePath(this, contentUri)
 
             Glide.with(this)
                     .load(HomeFragment.CURRENT_IMAGE_CHOOSEN_URI)
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(image_chosed)
 
             image_chosed.visibility = View.VISIBLE // show image view
@@ -157,7 +181,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == PICK_PHOTO && resultCode == Activity.RESULT_OK && data != null) {
             showImage(data)
         } else {

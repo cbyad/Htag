@@ -7,6 +7,9 @@
     <string name="action_delete">Delete</string>
     <string name="large_image">Sorry your image is too huge !!</string>
     <string name="not_foung_image">Sorry image not found !!</string>
+    <string name="welcome">Welcome to Htag </string>
+    <string name="loaded">Your profile data is loaded </string>
+
 
     <string name="action_saved">Saved</string>
     <string name="tab_item_home">Home</string>

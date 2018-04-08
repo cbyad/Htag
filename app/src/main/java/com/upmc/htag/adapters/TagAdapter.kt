@@ -17,9 +17,6 @@ import java.time.Duration
 import android.view.animation.Animation.RELATIVE_TO_SELF
 import android.view.animation.ScaleAnimation
 
-
-
-
 /**
  * Created by cb_mac on 25/03/2018.
  */
@@ -57,22 +54,6 @@ class TagAdapter(val tags: MutableList<Tag>, val context: Context?) :
 
         init {
             tagName= view.findViewById(R.id.tag_name)
-
-            tagName.isClickable=true
-
-            tagName.setOnClickListener {
-                if (!isClicked) {
-                    Log.e("clicked","okkkkkkk")
-                    it.setBackgroundResource(R.drawable.custom_tag_view_clicked)
-                    isClicked=true
-                }
-                else {
-                    Log.e("clicked","nopeeeeee")
-                    it.setBackgroundResource(R.drawable.custom_tag_view)
-                    isClicked=false
-                }
-
-            }
         }
 
         fun display(tag: Tag) {
@@ -83,10 +64,6 @@ class TagAdapter(val tags: MutableList<Tag>, val context: Context?) :
 
 
          fun setFadeAnimation(view: View) {
-            //val anim = AlphaAnimation(0.0f, 1.0f)
-            //anim.duration = FADE_DURATION
-            //view.startAnimation(anim)
-
              val anim = ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
              anim.duration = FADE_DURATION
              view.startAnimation(anim)

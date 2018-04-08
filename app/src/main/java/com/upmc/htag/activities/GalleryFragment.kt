@@ -20,11 +20,9 @@ import com.upmc.htag.persists.StorageHandler
  * Created by cb_mac on 06/03/2018.
  */
 
-/**
- * A placeholder fragment containing a simple view.
- */
 class GalleryFragment : Fragment(), SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
     private val TAG: String = GalleryFragment.javaClass.simpleName
+    private val grids = arrayOf<String>("2", "4", "6")
 
     /**
      * components views
@@ -57,9 +55,11 @@ class GalleryFragment : Fragment(), SearchView.OnQueryTextListener, MenuItem.OnA
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_gallery_model, container, false)
 
+
         galleryListView = rootView.findViewById(R.id.gallery_list_view)
         galleryListView.layoutManager = GridLayoutManager(rootView.context, NUMBER_OF_COLUMNS)
         galleryListView.adapter = GalleryAdapter(imageList, rootView.context)
+
         return rootView
     }
 
@@ -87,7 +87,6 @@ class GalleryFragment : Fragment(), SearchView.OnQueryTextListener, MenuItem.OnA
         val id = item.itemId
         when (id) {
             R.id.action_settings -> {
-                val grids = arrayOf<String>("2", "4", "6")
                 var builder: AlertDialog.Builder = AlertDialog.Builder(context)
 
                 builder.setTitle("Number of grids")
@@ -95,12 +94,17 @@ class GalleryFragment : Fragment(), SearchView.OnQueryTextListener, MenuItem.OnA
                         .setItems(grids) { dialog, which ->
                             // the user clicked on grids[which]
                             val number: Int = (grids[which]).toInt()
+
+
                             galleryListView.layoutManager = GridLayoutManager(context, number)
                         }.show()
                 return true
             }
 
             R.id.action_delete -> {
+                if (StorageHandler.allTagsStored.isEmpty()) // nothing to delete don't show alert !
+                    return true
+
                 var builder: AlertDialog.Builder = AlertDialog.Builder(context)
 
                 builder.setMessage("Are you sure ?").setCancelable(true)
@@ -129,7 +133,7 @@ class GalleryFragment : Fragment(), SearchView.OnQueryTextListener, MenuItem.OnA
         }
 
         var filteredValues = arrayListOf<String>()
-        tagList.forEach { it -> filteredValues.add(it) } // copy
+        tagList.distinctBy { it }.forEach { it -> filteredValues.add(it) } // remove duplicate and copy
         tagList.forEach { it ->
             if (!it.toLowerCase().startsWith(newText.toLowerCase())) {
                 filteredValues.remove(it) // remove don't match pattern
@@ -139,18 +143,10 @@ class GalleryFragment : Fragment(), SearchView.OnQueryTextListener, MenuItem.OnA
         if (filteredValues.isNotEmpty()) {
             var newImageList = arrayListOf<MediaContent>()
 
-            val sizeOfFiltered = filteredValues.size
-/*
-            for(i in 0 until sizeOfFiltered){
-                for (j in 0 until imageList.size){
-                    if(filteredValues[i]== imageList[j].title){
-                        newImageList.add(MediaContent(imageList[j].src, imageList[j].title))
-                    }
-                }
+            filteredValues.forEach { it ->
+                imageList.filter { t -> it == t.title }.forEach { elt ->
+                    newImageList.add(MediaContent(elt.src, elt.title)) }
             }
- */
-            imageList.filter { it -> filteredValues[0] == it.title }
-                    .forEach { elt -> newImageList.add(MediaContent(elt.src, elt.title)) }
 
             imageList.clear()
             imageList.addAll(newImageList)
@@ -159,7 +155,6 @@ class GalleryFragment : Fragment(), SearchView.OnQueryTextListener, MenuItem.OnA
             imageList.clear()
             galleryListView.adapter.notifyDataSetChanged()
         }
-
         return false
     }
 

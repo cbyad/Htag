@@ -43,7 +43,6 @@ object JSONHandler {
         return assocList
     }
 
-
     fun detectAdultContent(jsonContent: String): Boolean {
         var isAdultContent = false
         try {

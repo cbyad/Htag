@@ -53,7 +53,7 @@ class HomeFragment : Fragment() {
     var outputStream: OutputStream? = null
     var writer: PrintWriter? = null
     val charset: String = "UTF-8"
-    val MAXIMUM_BYTES = 400000 // maximum value granted by the api
+    val MAXIMUM_BYTES  = 4000000 // maximum value granted by the api
 
 
     /**

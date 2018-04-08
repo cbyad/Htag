@@ -4,7 +4,6 @@ package com.upmc.htag.utils;
  * Created by cb_mac on 27/03/2018.
  */
 
-import android.util.Log;
 
 import java.net.HttpURLConnection;
 import java.util.HashMap;
@@ -52,7 +51,6 @@ public class WebServiceRequest {
         HttpResponse response = this.client.execute(request);
 
         int statusCode = response.getStatusLine().getStatusCode();
-        Log.e("OKKKKKK"," "+statusCode);
         if (statusCode == HttpURLConnection.HTTP_OK) {
             return readInput(response.getEntity().getContent());
 
